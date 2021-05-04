@@ -1,5 +1,5 @@
 [package]
-name = "rust-bip21"
+name = "bip21"
 version = "0.1.0"
 authors = ["yassun <yassun910@gmail.com>"]
 edition = "2018"
