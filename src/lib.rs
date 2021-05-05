@@ -51,20 +51,20 @@ impl URIResources {
             if amount < 0.0 {
                 return Err(Error::NegativeAmountErr);
             }
-            map.insert("amount", amount.to_string());
+            map.insert(String::from("amount"), amount.to_string());
         }
 
         if let Some(label) = self.label.clone() {
-            map.insert("label", label);
+            map.insert(String::from("label"), label);
         }
 
         if let Some(message) = self.message.clone() {
-            map.insert("message", message);
+            map.insert(String::from("message"), message);
         }
 
         if let Some(params) = self.params.clone() {
             for (key, value) in params {
-                map.insert(&key, value);
+                map.insert(key.clone(), value.clone());
             }
         }
 
