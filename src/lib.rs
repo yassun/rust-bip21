@@ -74,3 +74,28 @@ impl URIResources {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use url::Url;
+    use super::*;
+
+    #[test]
+    fn test_build_uri() {
+        let mut params = HashMap::new();
+        params.insert(String::from("somethingyoudontunderstan"), String::from("50"));
+        params.insert(String::from("somethingelseyoudontget"), String::from("999"));
+        let uri = URIResources::new(
+            String::from("bitcoin"),
+            String::from("175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W"),
+            Some(100.0),
+            Some(String::from("Luke-Jr")),
+            Some(String::from("message")),
+            Some(params),
+        );
+        let url = Url::parse(&uri.build_uri().unwrap()).unwrap();
+        assert_eq!(url.scheme(), "bitcoin");
+        assert_eq!(url.path(), "175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W");
+        assert_eq!(url.query_pairs().count(), 5);
+    }
+}
