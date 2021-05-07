@@ -73,6 +73,18 @@ impl URIResources {
             Err(_) => Err(Error::UrlParseError)
         }
     }
+
+    pub fn parse(url: String) -> Result<URIResources, Error> {
+        let uri = URIResources::new(
+            String::from("bitcoin"),
+            String::from("175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W"),
+            Some(100.0),
+            Some(String::from("Luke-Jr")),
+            Some(String::from("message")),
+            Some(HashMap::new()),
+        );
+        Ok(uri)
+    }
 }
 
 #[cfg(test)]
