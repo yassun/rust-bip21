@@ -73,23 +73,32 @@ impl URIResources {
             Err(_) => Err(Error::UrlParseError),
         }
     }
+}
 
-    pub fn parse(uri: String) -> Result<URIResources, Error> {
-        let s: Vec<&str> = uri.split(':').collect();
-        if s[0] != "bitcoin" || s.len() != 2 {
-            return Err(Error::InvalidUrnErr);
-        }
+pub fn parse(uri: String) -> Result<URIResources, Error> {
+    let s: Vec<&str> = uri.split(':').collect();
+    if s[0] != "bitcoin" || s.len() != 2 {
+        return Err(Error::InvalidUrnErr);
+    }
+    let urn = s[0].to_string();
+    let address = parse_address(&uri, &urn);
 
-        let test = URIResources::new(
-            String::from("bitcoin"),
-            String::from("175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W"),
-            Some(100.0),
-            Some(String::from("Luke-Jr")),
-            Some(String::from("message")),
-            Some(HashMap::new()),
-        );
+    let uri = URIResources::new(
+        urn,
+        address,
+        None,
+        None,
+        None,
+        None,
+    );
 
-        Ok(test)
+    Ok(uri)
+}
+
+fn parse_address(uri: &str, urn: &str) -> String {
+    match uri.find("?") {
+        Some(idx) => uri[urn.len() + 1..idx].to_string(),
+        None => uri[urn.len() + 1..].to_string(),
     }
 }
 
