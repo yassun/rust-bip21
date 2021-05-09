@@ -82,6 +82,7 @@ pub fn parse(uri: String) -> Result<URIResources, Error> {
     }
     let urn = s[0].to_string();
     let address = parse_address(&uri, &urn);
+    let p = parse_params(&uri, &urn, &address);
 
     let uri = URIResources::new(
         urn,
@@ -100,6 +101,20 @@ fn parse_address(uri: &str, urn: &str) -> String {
         Some(idx) => uri[urn.len() + 1..idx].to_string(),
         None => uri[urn.len() + 1..].to_string(),
     }
+}
+
+fn parse_params(uri: &str, urn: &str, address: &str) -> HashMap<String, String> {
+    let mut ps = HashMap::new();
+    let qp = uri[urn.len()+1+address.len()+1..].to_string();
+    let query: Vec<&str> = qp.split('&').collect();
+    for q in query {
+        let p: Vec<&str> = q.split('=').collect();
+        if p.len() != 2 {
+            continue;
+        }
+        ps.insert(String::from(p[0]), String::from(p[1]));
+    }
+    ps
 }
 
 #[cfg(test)]
