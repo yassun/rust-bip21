@@ -6,6 +6,7 @@ pub enum Error {
     InvalidUrnErr,
     NegativeAmountErr,
     UrlParseError,
+    InvalidAmountErr,
 }
 
 #[derive(Debug)]
@@ -82,18 +83,15 @@ pub fn parse(uri: String) -> Result<URIResources, Error> {
     }
     let urn = s[0].to_string();
     let address = parse_address(&uri, &urn);
-    let p = parse_params(&uri, &urn, &address);
+    let mut p = parse_params(&uri, &urn, &address);
+    let mut uri_resources = URIResources::new(urn, address, None, None, None, None);
 
-    let uri = URIResources::new(
-        urn,
-        address,
-        None,
-        None,
-        None,
-        None,
-    );
+    if let Some(amount) = p.get("amount") {
+        uri_resources.amount = Some(parse_amount(amount)?);
+        p.remove("amount");
+    }
 
-    Ok(uri)
+    Ok(uri_resources)
 }
 
 fn parse_address(uri: &str, urn: &str) -> String {
@@ -105,7 +103,7 @@ fn parse_address(uri: &str, urn: &str) -> String {
 
 fn parse_params(uri: &str, urn: &str, address: &str) -> HashMap<String, String> {
     let mut ps = HashMap::new();
-    let qp = uri[urn.len()+1+address.len()+1..].to_string();
+    let qp = uri[urn.len() + 1 + address.len() + 1..].to_string();
     let query: Vec<&str> = qp.split('&').collect();
     for q in query {
         let p: Vec<&str> = q.split('=').collect();
@@ -115,6 +113,19 @@ fn parse_params(uri: &str, urn: &str, address: &str) -> HashMap<String, String> 
         ps.insert(String::from(p[0]), String::from(p[1]));
     }
     ps
+}
+
+fn parse_amount(amount: &str) -> Result<f64, Error> {
+    match amount.parse::<f64>() {
+        Ok(f) => {
+            if f < 0.0 {
+                Err(Error::NegativeAmountErr)
+            } else {
+                Ok(f)
+            }
+        }
+        Err(_) => Err(Error::InvalidAmountErr),
+    }
 }
 
 #[cfg(test)]
