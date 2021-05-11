@@ -84,14 +84,25 @@ pub fn parse(uri: String) -> Result<URIResources, Error> {
     let urn = s[0].to_string();
     let address = parse_address(&uri, &urn);
     let mut p = parse_params(&uri, &urn, &address);
-    let mut uri_resources = URIResources::new(urn, address, None, None, None, None);
-
+    let mut u = URIResources::new(urn, address, None, None, None, None);
     if let Some(amount) = p.get("amount") {
-        uri_resources.amount = Some(parse_amount(amount)?);
+        u.amount = Some(parse_amount(amount)?);
         p.remove("amount");
     }
 
-    Ok(uri_resources)
+    if let Some(label) = p.get("label") {
+        u.label = Some(String::from(label));
+        p.remove("label");
+    }
+
+    if let Some(message) = p.get("message") {
+        u.message = Some(String::from(message));
+        p.remove("message");
+    }
+
+    u.params = Some(p);
+
+    Ok(u)
 }
 
 fn parse_address(uri: &str, urn: &str) -> String {
