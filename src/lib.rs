@@ -165,4 +165,10 @@ mod tests {
         assert_eq!(url.path(), "175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W");
         assert_eq!(url.query_pairs().count(), 5);
     }
+
+    #[test]
+    fn test_parse() {
+        let p = parse(String::from("bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W")).unwrap();
+        println!("{:?}", p);
+    }
 }
