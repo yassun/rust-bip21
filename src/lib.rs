@@ -114,7 +114,11 @@ fn parse_address(uri: &str, urn: &str) -> String {
 
 fn parse_params(uri: &str, urn: &str, address: &str) -> HashMap<String, String> {
     let mut ps = HashMap::new();
-    let qp = uri[urn.len() + 1 + address.len() + 1..].to_string();
+    let idx = urn.len() + 1 + address.len() + 1;
+    if uri.len() < idx {
+        return ps;
+    }
+    let qp = uri[idx..].to_string();
     let query: Vec<&str> = qp.split('&').collect();
     for q in query {
         let p: Vec<&str> = q.split('=').collect();
