@@ -172,7 +172,21 @@ mod tests {
 
     #[test]
     fn test_parse() {
-        let p = parse(String::from("bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W")).unwrap();
-        println!("{:?}", p);
+        let p = parse(String::from("bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation for project&req-somethingelseyoudontget=999")).unwrap();
+        assert_eq!(p.urn_scheme, String::from("bitcoin"));
+        assert_eq!(
+            p.address,
+            String::from("175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W")
+        );
+        assert_eq!(p.amount, Some(50.0));
+        assert_eq!(p.label, Some(String::from("Luke-Jr")));
+        assert_eq!(p.message, Some(String::from("Donation for project")));
+        assert_eq!(
+            p.params
+                .unwrap()
+                .get("req-somethingelseyoudontget")
+                .unwrap(),
+            "999"
+        );
     }
 }
