@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use url::Url;
 
 #[derive(Debug)]
 pub enum Error {
@@ -69,10 +68,13 @@ impl URIResources {
             }
         }
 
-        match Url::parse_with_params(&url, map) {
-            Ok(parsed) => Ok(parsed.as_str().to_string()),
-            Err(_) => Err(Error::UrlParseError),
+        if map.keys().len() != 0 {
+            url = format!("{}?", url);
+            for (key, value) in map {
+                url = format!("{}&{}={}", url, key, value);
+            }
         }
+        Ok(url)
     }
 }
 
