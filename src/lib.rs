@@ -9,7 +9,7 @@ pub enum Error {
 }
 
 #[derive(Debug)]
-pub struct URIResources {
+pub struct UriResources {
     urn_scheme: String,
     address: String,
     amount: Option<f64>,
@@ -18,7 +18,7 @@ pub struct URIResources {
     params: Option<HashMap<String, String>>,
 }
 
-impl URIResources {
+impl UriResources {
     pub fn new(
         urn_scheme: String,
         address: String,
@@ -26,8 +26,8 @@ impl URIResources {
         label: Option<String>,
         message: Option<String>,
         params: Option<HashMap<String, String>>,
-    ) -> URIResources {
-        URIResources {
+    ) -> UriResources {
+        UriResources {
             urn_scheme,
             address,
             amount,
@@ -78,7 +78,7 @@ impl URIResources {
     }
 }
 
-pub fn parse(uri: String) -> Result<URIResources, Error> {
+pub fn parse(uri: String) -> Result<UriResources, Error> {
     let s: Vec<&str> = uri.split(':').collect();
     if s[0] != "bitcoin" || s.len() != 2 {
         return Err(Error::InvalidUrnErr);
@@ -86,7 +86,7 @@ pub fn parse(uri: String) -> Result<URIResources, Error> {
     let urn = s[0].to_string();
     let address = parse_address(&uri, &urn);
     let mut p = parse_params(&uri, &urn, &address);
-    let mut u = URIResources::new(urn, address, None, None, None, None);
+    let mut u = UriResources::new(urn, address, None, None, None, None);
     if let Some(amount) = p.get("amount") {
         u.amount = Some(parse_amount(amount)?);
         p.remove("amount");
@@ -158,7 +158,7 @@ mod tests {
             String::from("50"),
         );
         params.insert(String::from("somethingelseyoudontget"), String::from("999"));
-        let uri = URIResources::new(
+        let uri = UriResources::new(
             String::from("bitcoin"),
             String::from("175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W"),
             Some(100.0),
