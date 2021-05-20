@@ -9,14 +9,14 @@ Parse the URI `bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-J
 ```Rust
 u := bip21::parse(String::from("bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation for project&req-somethingelseyoudontget=999")).unwrap();
 
-// URIResources { urn_scheme: "bitcoin", address: "175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W", amount: Some(50.0), label: Some("Luke-Jr"), message: Some("Donation for project"), params: Some({"req-somethingelseyoudontget": "999"}) }
+// UriResources { urn_scheme: "bitcoin", address: "175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W", amount: Some(50.0), label: Some("Luke-Jr"), message: Some("Donation for project"), params: Some({"req-somethingelseyoudontget": "999"}) }
 println!("{:?}", u);
 ```
 
 Build the URI `bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=20.3&label=Luke-Jr`
 
 ```Rust
-let u = bip21::URIResources::new(
+let u = bip21::UriResources::new(
     String::from("bitcoin"),
     String::from("175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W"),
     Some(100.0),
