@@ -108,7 +108,7 @@ pub fn parse(uri: String) -> Result<UriResources, Error> {
 }
 
 fn parse_address(uri: &str, urn: &str) -> String {
-    match uri.find("?") {
+    match uri.find('?') {
         Some(idx) => uri[urn.len() + 1..idx].to_string(),
         None => uri[urn.len() + 1..].to_string(),
     }
