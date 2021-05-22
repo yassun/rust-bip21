@@ -1,5 +1,7 @@
 # rust-bip21
 
+[![test](https://github.com/yassun/rust-bip21/actions/workflows/test.yaml/badge.svg)](https://github.com/yassun/rust-bip21/actions/workflows/test.yaml)
+
 rust-bip21 is an open source library to handle the URI based on the [BIP-21](https://github.com/bitcoin/bips/blob/master/bip-0021.mediawiki) standard.
 
 # Usage
