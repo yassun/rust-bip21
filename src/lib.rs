@@ -38,7 +38,7 @@ impl UriResources {
     }
 
     pub fn build_uri(&self) -> Result<String, Error> {
-        if self.urn_scheme != "bitcoin" {
+        if !self.urn_scheme.eq_ignore_ascii_case("bitcoin") {
             return Err(Error::InvalidUrnErr);
         }
 
@@ -80,7 +80,7 @@ impl UriResources {
 
 pub fn parse(uri: String) -> Result<UriResources, Error> {
     let s: Vec<&str> = uri.split(':').collect();
-    if s[0] != "bitcoin" || s.len() != 2 {
+    if !s[0].eq_ignore_ascii_case("bitcoin") || s.len() != 2 {
         return Err(Error::InvalidUrnErr);
     }
     let urn = s[0].to_string();
@@ -152,43 +152,47 @@ mod tests {
 
     #[test]
     fn test_build_uri() {
-        let mut params = HashMap::new();
-        params.insert(
-            String::from("somethingyoudontunderstan"),
-            String::from("50"),
-        );
-        params.insert(String::from("somethingelseyoudontget"), String::from("999"));
-        let uri = UriResources::new(
-            String::from("bitcoin"),
-            String::from("175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W"),
-            Some(100.0),
-            Some(String::from("Luke-Jr")),
-            Some(String::from("message")),
-            Some(params),
-        );
-        let url = Url::parse(&uri.build_uri().unwrap()).unwrap();
-        assert_eq!(url.scheme(), "bitcoin");
-        assert_eq!(url.path(), "175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W");
-        assert_eq!(url.query_pairs().count(), 5);
+        for scheme in ["bitcoin", "bITcoIn", "BITCOIN"] {
+            let mut params = HashMap::new();
+            params.insert(
+                String::from("somethingyoudontunderstan"),
+                String::from("50"),
+            );
+            params.insert(String::from("somethingelseyoudontget"), String::from("999"));
+            let uri = UriResources::new(
+                String::from(scheme),
+                String::from("175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W"),
+                Some(100.0),
+                Some(String::from("Luke-Jr")),
+                Some(String::from("message")),
+                Some(params),
+            );
+            let url = Url::parse(&uri.build_uri().unwrap()).unwrap();
+            assert_eq!(url.scheme(), "bitcoin");
+            assert_eq!(url.path(), "175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W");
+            assert_eq!(url.query_pairs().count(), 5);
+        }
     }
 
     #[test]
     fn test_parse() {
-        let p = parse(String::from("bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation for project&req-somethingelseyoudontget=999")).unwrap();
-        assert_eq!(p.urn_scheme, String::from("bitcoin"));
-        assert_eq!(
-            p.address,
-            String::from("175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W")
-        );
-        assert_eq!(p.amount, Some(50.0));
-        assert_eq!(p.label, Some(String::from("Luke-Jr")));
-        assert_eq!(p.message, Some(String::from("Donation for project")));
-        assert_eq!(
-            p.params
-                .unwrap()
-                .get("req-somethingelseyoudontget")
-                .unwrap(),
-            "999"
-        );
+        for scheme in ["bitcoin", "bITcoIn", "BITCOIN"] {
+            let p = parse(format!("{scheme}:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation for project&req-somethingelseyoudontget=999")).unwrap();
+            assert_eq!(p.urn_scheme, String::from(scheme));
+            assert_eq!(
+                p.address,
+                String::from("175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W")
+            );
+            assert_eq!(p.amount, Some(50.0));
+            assert_eq!(p.label, Some(String::from("Luke-Jr")));
+            assert_eq!(p.message, Some(String::from("Donation for project")));
+            assert_eq!(
+                p.params
+                    .unwrap()
+                    .get("req-somethingelseyoudontget")
+                    .unwrap(),
+                "999"
+            );
+        }
     }
 }
